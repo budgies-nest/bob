@@ -1,0 +1,101 @@
+services:
+# docker compose up --build
+
+  remote:
+    build:
+      context: ./remote
+      dockerfile: Dockerfile
+    ports:
+      - 7070:7070
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DMR_BASE_URL=${DMR_BASE_URL}
+      - MODEL_RUNNER_CHAT_MODEL_BOB=${MODEL_RUNNER_CHAT_MODEL_BOB}
+      - MODEL_RUNNER_CHAT_MODEL_MILO=${MODEL_RUNNER_CHAT_MODEL_MILO}
+      - MODEL_RUNNER_CHAT_MODEL_BILL=${MODEL_RUNNER_CHAT_MODEL_BILL}
+      - MODEL_RUNNER_CHAT_MODEL_GARFIELD=${MODEL_RUNNER_CHAT_MODEL_GARFIELD}
+      - MODEL_RUNNER_TOOLS_MODEL=${MODEL_RUNNER_TOOLS_MODEL}
+      - MODEL_RUNNER_EMBEDDING_MODEL=${MODEL_RUNNER_EMBEDDING_MODEL}
+      - PATH_DOCS=${PATH_DOCS}
+      - MCP_HTTP_SERVER_URL=${MCP_HTTP_SERVER_URL}   
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - download-chat-model-bob
+      - download-chat-model-milo
+      - download-chat-model-bill
+      - download-chat-model-garfield
+      - download-embedding-model
+      - download-tools-model
+      - remote
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend
+          include: ["*.go"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 9090:8501
+    environment:
+      - BACKEND_SERVICE_URL=http://backend:5050
+      - PAGE_TITLE=""
+      - PAGE_HEADER=🐳 We are legion (we are Bob) 🤖
+      - PAGE_ICON=🤖
+      - DMR_BASE_URL=${DMR_BASE_URL}
+      - MODEL_RUNNER_CHAT_MODEL_BOB=${MODEL_RUNNER_CHAT_MODEL_BOB}
+      - MODEL_RUNNER_CHAT_MODEL_MILO=${MODEL_RUNNER_CHAT_MODEL_MILO}
+      - MODEL_RUNNER_CHAT_MODEL_BILL=${MODEL_RUNNER_CHAT_MODEL_BILL}
+      - MODEL_RUNNER_CHAT_MODEL_GARFIELD=${MODEL_RUNNER_CHAT_MODEL_GARFIELD}
+      - MODEL_RUNNER_TOOLS_MODEL=${MODEL_RUNNER_TOOLS_MODEL}
+      - MODEL_RUNNER_EMBEDDING_MODEL=${MODEL_RUNNER_EMBEDDING_MODEL}
+    depends_on:
+      - backend
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/app.py
+
+  download-chat-model-bob:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_CHAT_MODEL_BOB}
+
+  download-chat-model-milo:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_CHAT_MODEL_MILO}
+
+  download-chat-model-bill:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_CHAT_MODEL_BILL}
+
+  download-chat-model-garfield:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_CHAT_MODEL_GARFIELD}
+
+  download-embedding-model:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_EMBEDDING_MODEL}
+
+  download-tools-model:
+    provider:
+      type: model
+      options:
+        model: ${MODEL_RUNNER_TOOLS_MODEL}
