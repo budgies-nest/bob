@@ -4,25 +4,25 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"we-are-legion/ai-agents"
+	aiagents "we-are-legion/ai-agents"
 	"we-are-legion/helpers"
 
-	"github.com/openai/openai-go"
 	"github.com/budgies-nest/budgie/agents"
+	"github.com/openai/openai-go"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-func ExecuteToolCalls(response http.ResponseWriter, flusher http.Flusher,agentsCatalog map[string]*aiagents.AgentConfig, riker *agents.Agent, selectedAgent *aiagents.AgentConfig, toolCalls []openai.ChatCompletionMessageToolCall) ([]string, error) {
+func ExecuteToolCalls(response http.ResponseWriter, flusher http.Flusher, agentsCatalog map[string]*aiagents.AgentConfig, riker *agents.Agent, selectedAgent *aiagents.AgentConfig, toolCalls []openai.ChatCompletionMessageToolCall) ([]string, error) {
 	helpers.ResponseLabel(response, flusher, "orange", "Executing tool calls...")
 
-	// IMPORTANT: 
+	// IMPORTANT:
 	// the job of Riker is only to detect if the user wants to change the current Agent,
 	// and to execute the tool calls.
 	// This method execute the tool calls detected by the Agent.
 	// And add the result to the message list of the Agent.
 	// BEGIN: execute the tool calls
-	
+
 	results, err := riker.ExecuteToolCalls(toolCalls, map[string]func(any) (any, error){
 
 		"choose_clone_of_bob": func(args any) (any, error) {
@@ -117,7 +117,13 @@ func ExecuteToolCalls(response http.ResponseWriter, flusher http.Flusher,agentsC
 	}
 
 	// NOTE: reset the Riker messages
-	riker.Params.Messages = []openai.ChatCompletionMessageParamUnion{}
+	riker.Params.Messages = []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(`
+					Your name is Riker, 
+					You know how to join the other clones of Bob, 
+					and you can use tools to do so.
+					`),
+	}
 
 	return results, err
 }
