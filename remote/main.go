@@ -6,31 +6,24 @@ import (
 
 	"github.com/budgies-nest/budgie/agents"
 	"github.com/budgies-nest/budgie/enums/base"
+	"github.com/budgies-nest/budgie/rag"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/openai/openai-go"
 )
 
-var chunks = []string{
-	`Michael Burnham is the main character on the Star Trek series, Discovery.  
-		She's a human raised on the logical planet Vulcan by Spock's father.  
-		Burnham is intelligent and struggles to balance her human emotions with Vulcan logic.  
-		She's become a Starfleet captain known for her determination and problem-solving skills.
-		Originally played by actress Sonequa Martin-Green`,
-
-	`James T. Kirk, also known as Captain Kirk, is a fictional character from the Star Trek franchise.  
-		He's the iconic captain of the starship USS Enterprise, 
-		boldly exploring the galaxy with his crew.  
-		Originally played by actor William Shatner, 
-		Kirk has appeared in TV series, movies, and other media.`,
-
-	`Jean-Luc Picard is a fictional character in the Star Trek franchise.
-		He's most famous for being the captain of the USS Enterprise-D,
-		a starship exploring the galaxy in the 24th century.
-		Picard is known for his diplomacy, intelligence, and strong moral compass.
-		He's been portrayed by actor Patrick Stewart.`,
-}
 
 func main() {
+
+	contents, err := rag.GetContentFiles("/app/docs", ".md")
+	if err != nil {
+		panic(fmt.Errorf("error getting content files for Bob agent: %w", err))
+	}
+
+	chunks := []string{}
+	for _, content := range contents {
+		chunks = append(chunks, rag.ChunkText(content, 512, 210)...)
+	}
+
 	bob, err := agents.NewAgent("Bob",
 		agents.WithDMR(context.Background(), base.DockerModelRunnerContainerURL),
 		agents.WithEmbeddingParams(
@@ -51,11 +44,11 @@ func main() {
 		panic(err)
 	}
 
-	searchInDoc := mcp.NewTool("question_about_something",
-		mcp.WithDescription(`Find an answer in the internal database.`),
+	searchInDoc := mcp.NewTool("question_about_pizza",
+		mcp.WithDescription(`Find an information about hawaiian pizza.`),
 		mcp.WithString("question",
 			mcp.Required(),
-			mcp.Description("Search question"),
+			mcp.Description("Search question about hawaiian pizza."),
 		),
 	)
 

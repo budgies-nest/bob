@@ -1,170 +1,63 @@
-# Docker Compose FAQ - 30 Common Questions and Answers
+# Top 20 Most Asked Questions About Docker Compose with Answers
 
-## 1. What is Docker Compose?
+1. **What is Docker Compose?**  
+Docker Compose is a tool for defining and running multi-container Docker applications using a single YAML file to configure all services, networks, and volumes.
 
-Docker Compose is a tool for defining and running multi-container Docker applications. It uses a YAML file to configure your application's services, networks, and volumes, allowing you to manage complex applications with a single command.
+2. **Why should I use Docker Compose?**  
+It simplifies managing multi-container applications by allowing you to define all services in one file and start them with a single command, improving development speed and environment consistency.
+
+3. **How do I install Docker Compose?**  
+Docker Compose is included with Docker Desktop on Windows and Mac. On Linux, you can install it separately following the official Docker Compose installation guide.
+
+4. **What is a `docker-compose.yml` file?**  
+It is a YAML file where you define your application's services, networks, and volumes for Docker Compose to create and manage.
+
+5. **How do I start services with Docker Compose?**  
+Run `docker compose up` in the directory containing your `docker-compose.yml` file to create and start all defined services.
+
+6. **How do I stop and remove containers created by Docker Compose?**  
+Use `docker compose down` to stop and remove containers, networks, and default volumes created by `up`.
+
+7. **Can I run one-off commands in a service container?**  
+Yes, use `docker compose run <service> <command>` to run a one-off command inside a service container.
+
+8. **How do I rebuild images in Docker Compose?**  
+Use `docker compose build` to build or rebuild images defined in your Compose file.
+
+9. **How do I view logs of running services?**  
+Run `docker compose logs` to see the output logs of all services, or `docker compose logs <service>` for a specific service.
+
+10. **How do I scale services with Docker Compose?**  
+Use `docker compose up --scale <service>=<number>` to run multiple instances of a service.
+
+11. **How do I execute a command inside a running container?**  
+Use `docker compose exec <service> <command>` to run commands inside a running service container.
+
+12. **How do I list running containers managed by Docker Compose?**  
+Run `docker compose ps` to list containers started by Compose.
+
+13. **How do I persist data in Docker Compose?**  
+Define volumes in your Compose file to persist data outside the container lifecycle.
+
+14. **Can I use environment variables in Docker Compose files?**  
+Yes, Compose supports environment variables in the YAML file and `.env` files for configuration flexibility.
+
+15. **What is the difference between `docker-compose` and `docker compose`?**  
+`docker-compose` is the standalone CLI tool (v1), while `docker compose` is the newer integrated CLI plugin (v2) included with Docker.
+
+16. **How do I update a service without downtime?**  
+Use rolling updates with orchestration tools like Docker Swarm or Kubernetes; Compose itself does not support zero-downtime updates.
+
+17. **Can Docker Compose be used in production?**  
+Yes, Compose can be used for single-host deployments in production, but for complex orchestration, tools like Swarm or Kubernetes are recommended.
+
+18. **How do I debug services running with Docker Compose?**  
+Use `docker compose logs` for logs and `docker compose exec` to get an interactive shell inside containers.
+
+19. **How do I customize networks in Docker Compose?**  
+You can define custom networks in the Compose file under the `networks` section and assign services to them.
+
+20. **How do I migrate from Docker Compose v1 to v2?**  
+Use the new `docker compose` CLI plugin and update your workflows accordingly; most Compose files remain compatible. Refer to the official migration guide for details.
 
 
-## 3. What is the compose.yml file?
-
-The compose.yml file is a YAML configuration file that defines services, networks, and volumes for your multi-container application. It's the blueprint that Docker Compose uses to create and manage your application stack.
-
-## 4. How do I start services with Docker Compose?
-
-Use `docker composeup` to start all services defined in your compose.yml file. Add `-d` flag to run in detached mode: `docker composeup -d`
-
-## 5. How do I stop Docker Compose services?
-
-Use `docker composedown` to stop and remove containers, networks, and default volumes. Use `docker composestop` to just stop services without removing them.
-
-## 6. What's the basic structure of a compose.yml file?
-
-A basic structure includes version, services, and optionally networks and volumes:
-```yaml
-version: '3.8'
-services:
-  web:
-    image: nginx
-  database:
-    image: postgres
-```
-
-## 7. How do I specify which Compose file to use?
-
-Use the `-f` flag: `docker compose-f custom-compose.yml up`. You can also set the `COMPOSE_FILE` environment variable.
-
-## 8. How do I build images with Docker Compose?
-
-Use the `build` directive in your service definition, pointing to a directory with a Dockerfile: `build: ./my-app` or specify context and dockerfile: `build: { context: ., dockerfile: Dockerfile.dev }`
-
-## 9. How do I set environment variables in Docker Compose?
-
-Use the `environment` key in your service, or reference an `.env` file with `env_file`. Example: `environment: - NODE_ENV=production` or `env_file: - .env`
-
-## 10. How do I map ports in Docker Compose?
-
-Use the `ports` directive: `ports: - "8080:80"` maps host port 8080 to container port 80. You can also use `- "80"` for random host port assignment.
-
-## 11. How do I define volumes in Docker Compose?
-
-Use the `volumes` directive under services: `volumes: - ./data:/app/data` for bind mounts, or `- db_data:/var/lib/mysql` for named volumes (which must be declared at the top level).
-
-## 12. How do I scale services with Docker Compose?
-
-Use `docker compose up --scale service_name=3` to run 3 instances of a service, or define `deploy.replicas: 3` in your compose file (for swarm mode).
-
-## 13. How do I view logs from Docker Compose services?
-
-Use `docker composelogs` to see all service logs, or `docker composelogs service_name` for a specific service. Add `-f` to follow logs in real-time.
-
-## 14. What are Docker Compose networks?
-
-Networks allow services to communicate with each other. Docker Compose automatically creates a default network for your application, and services can reach each other using service names as hostnames.
-
-## 15. How do I create custom networks in Docker Compose?
-
-Define networks at the top level and reference them in services:
-```yaml
-networks:
-  frontend:
-  backend:
-services:
-  web:
-    networks: [frontend]
-```
-
-## 16. How do I depend on other services in Docker Compose?
-
-Use `depends_on` to specify service dependencies: `depends_on: - database`. This ensures the database starts before the web service, though it doesn't wait for the service to be ready.
-
-## 17. How do I restart services with Docker Compose?
-
-Use `docker composerestart` to restart all services, or `docker composerestart service_name` for a specific service. You can also set restart policies with `restart: always`.
-
-## 18. How do I run one-off commands with Docker Compose?
-
-Use `docker composerun service_name command` to run a command in a new container, or `docker composeexec service_name command` to run in an existing container.
-
-## 19. What are profiles in Docker Compose?
-
-Profiles allow you to selectively start services. Define profiles on services and use `--profile` flag: `docker compose--profile debug up` to start only services with the debug profile.
-
-## 20. How do I override Docker Compose configurations?
-
-Use multiple compose files: `docker compose-f compose.yml -f docker-compose.override.yml up`. The override file extends or overrides the base configuration.
-
-## 21. How do I set health checks in Docker Compose?
-
-Use the `healthcheck` directive:
-```yaml
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-```
-
-## 22. How do I use secrets in Docker Compose?
-
-Define secrets at the top level and reference them in services:
-```yaml
-secrets:
-  db_password:
-    file: ./db_password.txt
-services:
-  app:
-    secrets: [db_password]
-```
-
-## 23. How do I limit resources for services?
-
-Use deploy configuration (mainly for swarm mode):
-```yaml
-deploy:
-  resources:
-    limits:
-      cpus: '0.5'
-      memory: 512M
-```
-
-## 24. What's the difference between docker composeup and docker composestart?
-
-`docker composeup` creates and starts containers, while `docker composestart` only starts existing stopped containers. Use `up` for initial deployment and `start` to resume stopped services.
-
-## 25. How do I remove volumes when stopping Docker Compose?
-
-Use `docker composedown -v` to remove named volumes along with containers and networks. Be careful as this will delete data stored in volumes.
-
-## 26. How do I use external networks in Docker Compose?
-
-Reference an existing network with `external: true`:
-```yaml
-networks:
-  existing_network:
-    external: true
-services:
-  app:
-    networks: [existing_network]
-```
-
-## 27. How do I extend services in Docker Compose?
-
-Use the `extends` keyword to inherit configuration from another service in the same or different file:
-```yaml
-web:
-  extends:
-    file: common.yml
-    service: webapp
-```
-
-## 28. How do I use Docker Compose with different environments?
-
-Create separate compose files for each environment (docker-compose.prod.yml, docker-compose.dev.yml) and use them with the `-f` flag, or use environment variables and .env files.
-
-## 29. How do I debug Docker Compose issues?
-
-Use `docker composeconfig` to validate and view the final configuration, `docker composeps` to check service status, and `docker composelogs` to examine service output. Add `--verbose` for detailed information.
-
-## 30. What are some Docker Compose best practices?
-
-Use specific image tags instead of 'latest', organize services logically, use .env files for environment-specific values, implement health checks, use multi-stage builds for smaller images, and separate development and production configurations.

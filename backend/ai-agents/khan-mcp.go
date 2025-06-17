@@ -32,7 +32,7 @@ func GetKhan() (*agents.Agent, error) {
 			},
 		}),
 		agents.WithMCPStreamableHttpClient(context.Background(), os.Getenv("MCP_HTTP_SERVER_URL"), agents.StreamableHttpOptions{}),
-		agents.WithMCPStreamableHttpTools([]string{"question_about_something"}),
+		agents.WithMCPStreamableHttpTools([]string{"question_about_pizza"}),
 		// TODO: create the MCP server
 	)
 

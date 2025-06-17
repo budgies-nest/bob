@@ -69,6 +69,8 @@ func InitializeBobAgent() (*AgentConfig, error) {
 			If the user asks something about Docker Compose, you can use the Bill clone to answer it.
 			If the user asks something about Docker Model Runner, you can use the Garfield clone to answer it.
 			If the user asks something about Docker Bake, you can use the Milo clone to answer it.
+
+			Use only your knowledge to answer the questions.
 		`),
 	}
 

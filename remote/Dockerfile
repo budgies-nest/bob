@@ -14,6 +14,6 @@ FROM scratch
 
 WORKDIR /app
 COPY --from=builder /app/mcp-http-server .
-
+COPY docs /app/docs
 
 CMD ["./mcp-http-server"]

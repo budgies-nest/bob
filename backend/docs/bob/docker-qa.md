@@ -1,114 +1,61 @@
-# Docker FAQ - 30 Common Questions and Answers
+# Top 20 Most Asked Docker Questions with Answers
 
-## 1. What is Docker?
+1. **What is Docker?**  
+   Docker is a platform that enables developers to automate the deployment of applications inside lightweight, portable containers.
 
-Docker is a containerization platform that allows you to package applications and their dependencies into lightweight, portable containers. These containers can run consistently across different environments, from development to production.
+2. **What is a Docker container?**  
+   A container is a lightweight, standalone, executable package that includes everything needed to run a piece of software, including code, runtime, system tools, libraries, and settings.
 
-## 2. What's the difference between Docker containers and virtual machines?
+3. **What is a Docker image?**  
+   A Docker image is a read-only template used to create containers. It contains the application and all dependencies.
 
-Containers share the host OS kernel and are more lightweight, while VMs include a full guest operating system. Containers start faster, use fewer resources, and provide better performance than VMs for most applications.
+4. **How do I install Docker?**  
+   Docker can be installed on various platforms including Windows, Mac, and Linux. Follow the official installation guides for your OS on the Docker Docs site.
 
-## 3. How do I install Docker?
+5. **What is Docker Hub?**  
+   Docker Hub is a cloud-based registry service where you can find and share container images with your team.
 
-Download Docker Desktop from docker.com for Windows/Mac, or install Docker Engine on Linux using your package manager. For Ubuntu: `sudo apt-get update && sudo apt-get install docker.io`
+6. **How do I create a Docker container?**  
+   Use the command `docker run <image-name>` to create and start a container from an image.
 
-## 4. What is a Docker image?
+7. **How do I list running containers?**  
+   Use `docker ps` to list all running containers.
 
-A Docker image is a read-only template containing the application code, runtime, libraries, and dependencies needed to run an application. Images are used to create containers.
+8. **How do I stop a running container?**  
+   Use `docker stop <container-id>` to stop a running container.
 
-## 5. What is a Docker container?
+9. **What is Docker Compose?**  
+   Docker Compose is a tool for defining and running multi-container Docker applications using a YAML file.
 
-A Docker container is a running instance of a Docker image. It's an isolated, executable package that includes everything needed to run an application.
+10. **How do I build a Docker image?**  
+    Use `docker build -t <image-name> .` in the directory containing your Dockerfile.
 
-## 6. How do I pull an image from Docker Hub?
+11. **What is a Dockerfile?**  
+    A Dockerfile is a text file with instructions to build a Docker image.
 
-Use the `docker pull` command followed by the image name: `docker pull nginx` or `docker pull ubuntu:20.04` for a specific version.
+12. **How do I share my Docker image?**  
+    Push your image to a registry like Docker Hub using `docker push <image-name>`.
 
-## 7. How do I run a container?
+13. **How do I remove unused Docker images?**  
+    Use `docker image prune` to remove dangling images or `docker system prune` to clean up unused data.
 
-Use `docker run` followed by the image name: `docker run nginx` or `docker run -d -p 8080:80 nginx` to run in detached mode with port mapping.
+14. **How do I check Docker version?**  
+    Run `docker version` to see the client and server version information.
 
-## 8. How do I list running containers?
+15. **What is the difference between Docker and a virtual machine?**  
+    Docker containers share the host OS kernel and are more lightweight, while VMs run full OS instances with their own kernel.
 
-Use `docker ps` to see running containers, or `docker ps -a` to see all containers (including stopped ones).
+16. **How do I persist data in Docker containers?**  
+    Use Docker volumes or bind mounts to persist data outside the container lifecycle.
 
-## 9. How do I stop a container?
+17. **How do I debug a Docker container?**  
+    Use `docker logs <container-id>` to view logs or `docker exec -it <container-id> /bin/bash` to get an interactive shell.
 
-Use `docker stop <container_id>` or `docker stop <container_name>`. You can also use `docker kill` for forceful termination.
+18. **What networking options does Docker provide?**  
+    Docker supports bridge, host, overlay, and macvlan networks for container communication.
 
-## 10. How do I remove a container?
+19. **How do I update a running container?**  
+    You cannot update a running container directly; instead, update the image and redeploy a new container.
 
-Use `docker rm <container_id>` to remove a stopped container, or `docker rm -f <container_id>` to force remove a running container.
-
-## 11. What is a Dockerfile?
-
-A Dockerfile is a text file containing instructions to build a Docker image. It defines the base image, dependencies, commands, and configuration needed for your application.
-
-## 12. How do I build an image from a Dockerfile?
-
-Use `docker build -t <image_name> .` in the directory containing your Dockerfile. The `-t` flag tags the image with a name.
-
-## 13. How do I map ports between host and container?
-
-Use the `-p` flag with `docker run`: `docker run -p 8080:80 nginx` maps host port 8080 to container port 80.
-
-## 14. How do I mount volumes in Docker?
-
-Use the `-v` flag: `docker run -v /host/path:/container/path nginx` or use named volumes: `docker run -v myvolume:/container/path nginx`
-
-## 15. What's the difference between COPY and ADD in Dockerfile?
-
-`COPY` simply copies files from host to container. `ADD` has additional features like extracting tar files and downloading URLs, but `COPY` is preferred for simple file copying.
-
-## 16. How do I access a running container's shell?
-
-Use `docker exec -it <container_id> /bin/bash` or `docker exec -it <container_id> sh` if bash isn't available.
-
-## 17. How do I view container logs?
-
-Use `docker logs <container_id>` to view logs, or `docker logs -f <container_id>` to follow logs in real-time.
-
-
-## 20. How do I list all Docker images?
-
-Use `docker images` or `docker image ls` to see all locally stored images with their tags, sizes, and creation dates.
-
-## 21. How do I remove Docker images?
-
-Use `docker rmi <image_id>` to remove an image, or `docker image prune` to remove unused images. Use `docker image prune -a` to remove all unused images.
-
-## 22. What are Docker networks?
-
-Docker networks allow containers to communicate with each other and external systems. Docker provides bridge, host, overlay, and custom network types.
-
-## 23. How do I create a custom Docker network?
-
-Use `docker network create <network_name>` to create a bridge network, or specify the driver: `docker network create -d bridge mynetwork`
-
-## 24. How do I connect containers to a network?
-
-Use `--network` flag when running: `docker run --network mynetwork nginx` or connect existing containers: `docker network connect mynetwork <container_id>`
-
-## 25. What is the difference between CMD and ENTRYPOINT?
-
-`CMD` provides default arguments that can be overridden, while `ENTRYPOINT` defines the main command that always runs. They can be used together where `ENTRYPOINT` sets the command and `CMD` provides default arguments.
-
-## 26. How do I set environment variables in containers?
-
-Use the `-e` flag: `docker run -e MY_VAR=value nginx` or use `--env-file` to load from a file: `docker run --env-file .env nginx`
-
-## 27. How do I inspect a container or image?
-
-Use `docker inspect <container_id>` for containers or `docker inspect <image_name>` for images to get detailed JSON information about configuration and metadata.
-
-## 28. What is Docker Hub?
-
-Docker Hub is a cloud-based registry service where you can store, share, and manage Docker images. It's the default registry for pulling public images.
-
-## 29. How do I push an image to Docker Hub?
-
-First tag your image: `docker tag myimage username/myimage:tag`, then push: `docker push username/myimage:tag`. You need to be logged in with `docker login`.
-
-## 30. How do I clean up Docker resources?
-
-Use `docker system prune` to remove unused containers, networks, and images. Add `-a` flag to also remove unused images. Use `docker volume prune` for unused volumes.
+20. **How do I secure Docker containers?**  
+    Follow best practices like running containers with least privilege, using trusted images, and enabling Docker security features.
